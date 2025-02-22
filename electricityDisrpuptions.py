@@ -3,7 +3,6 @@ import requests
 from bs4 import BeautifulSoup
 import os
 
-URL = "https://siteapps.deddie.gr/outages2public"
 NOTIFIED_OUTAGES_FILE = "notified_outages.json"
 
 def load_config(config_file):
@@ -11,10 +10,10 @@ def load_config(config_file):
     with open(config_file, 'r', encoding='utf-8') as file:
         return json.load(file)
 
-def get_outages_for_prefecture(prefecture_id):
+def get_outages_for_prefecture(url, prefecture_id):
     """Fetch and parse outage information for a given prefecture."""
     try:
-        response = requests.get(URL)
+        response = requests.get(url)
         response.raise_for_status()
     except requests.RequestException as e:
         print(f"Failed to fetch the page: {e}")
@@ -33,7 +32,7 @@ def get_outages_for_prefecture(prefecture_id):
     }
 
     try:
-        response = requests.post(URL, data=form_data)
+        response = requests.post(url, data=form_data)
         response.raise_for_status()
     except requests.RequestException as e:
         print(f"Failed to submit the form: {e}")
@@ -90,13 +89,14 @@ def save_notified_outages(file_path, outages):
 def main():
     # Load configuration
     config = load_config('config.json')
+    url = config['url']
     selected_prefecture_id = config['selected_prefecture']
     selected_municipality = config['selected_municipality']
     pushover_api_token = config['pushover_api_token']
     pushover_user_key = config['pushover_user_key']
 
     # Get outages for the selected prefecture
-    outages = get_outages_for_prefecture(selected_prefecture_id)
+    outages = get_outages_for_prefecture(url, selected_prefecture_id)
 
     # Filter outages for the selected municipality
     filtered_outages = [outage for outage in outages if selected_municipality in outage['municipality']]
