@@ -1,4 +1,5 @@
 {
+    "url": "https://siteapps.deddie.gr/outages2public",
     "selected_prefecture": "10",
     "selected_municipality": "ΓΛΥΦΑΔΑΣ",
     "pushover_api_token": "your_pushover_api_token",
